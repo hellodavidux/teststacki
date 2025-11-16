@@ -215,6 +215,14 @@ export default function NodeSelector({ isOpen, onClose, onSelectNode, position }
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<Category>('Popular')
 
+  // Clear search when closing
+  useEffect(() => {
+    if (!isOpen) {
+      setSearchQuery('')
+      setSelectedCategory('Popular')
+    }
+  }, [isOpen])
+
   // Transform and memoize node data
   const nodeData = useMemo(() => transformNodeData(), [])
 

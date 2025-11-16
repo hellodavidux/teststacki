@@ -2,7 +2,27 @@
   "Inputs": [
     { "name": "Input", "keywords": ["input", "user", "trigger", "start", "begin"] },
     { "name": "Files", "keywords": ["file", "upload", "document", "trigger, input"] },
-    { "name": "Trigger", "keywords": ["app", "trigger", "webhook", "api", "start, input"] },
+    { 
+      "name": "Trigger", 
+      "keywords": ["app", "trigger", "webhook", "api", "start, input"],
+      "subactions": [
+        { "name": "Airtable" },
+        { "name": "Google Drive" },
+        { "name": "Google Sheets" },
+        { "name": "Gmail" },
+        { "name": "Microsoft Teams" },
+        { "name": "Outlook" },
+        { "name": "Realtime Chat" },
+        { "name": "SharePoint" },
+        { "name": "Slack" },
+        { "name": "StackAI" },
+        { "name": "Github" },
+        { "name": "AWS SQS" },
+        { "name": "Stripe" },
+        { "name": "Typeform" },
+        { "name": "Zendesk" }
+      ]
+    },
     { "name": "URL", "keywords": ["url", "link", "web", "trigger", "http, input"] },
     { "name": "Audio", "keywords": ["audio", "sound", "voice", "trigger", "record, input"] }
   ],
@@ -27,9 +47,40 @@
     { "name": "Epic FHIR", "keywords": ["epic", "fhir", "healthcare", "medical", "ehr"] },
     { "name": "Firecrawl", "keywords": ["firecrawl", "web", "scrape", "crawl", "website"] },
     { "name": "Google Docs", "keywords": ["google", "docs", "document", "word", "text", "editor"] },
-    { "name": "Google Drive", "keywords": ["google", "drive", "storage", "file", "cloud", "gdrive"] },
-    { "name": "Google Sheets", "keywords": ["google", "sheets", "spreadsheet", "excel", "table", "data"] },
-    { "name": "Gmail", "keywords": ["gmail", "email", "mail", "google", "message", "inbox", "send email"] },
+    { 
+      "name": "Google Drive", 
+      "keywords": ["google", "drive", "storage", "file", "cloud", "gdrive"],
+      "subactions": [
+        { "name": "Get File", "section": "File Tools", "description": "Get a file's metadata, content, or parsed text from Google Drive" },
+        { "name": "Create File", "section": "File Tools", "description": "Create a file in Google Drive (optionally upload content for pdf/docx/xlsx/pptx)" }
+      ]
+    },
+    { 
+      "name": "Google Sheets", 
+      "keywords": ["google", "sheets", "spreadsheet", "excel", "table", "data"],
+      "subactions": [
+        { "name": "Write to Sheet", "section": "Sheet Tools", "description": "Write data to a Google Sheet (e.g., Sheet1, JSON data)" },
+        { "name": "Read from Sheet", "section": "Sheet Tools", "description": "Read data from a Google Sheet (e.g., Sheet1, range A1:B10)" },
+        { "name": "Update Sheet", "section": "Sheet Tools", "description": "Update data in a Google Sheet (by row, criteria, or range)" },
+        { "name": "Delete Row", "section": "Sheet Tools", "description": "Delete a specific row from a Google Sheet by row number" },
+        { "name": "Get Row by Index", "section": "Sheet Tools", "description": "Get a specific row from a Google Sheet by row number/index" },
+        { "name": "Update Cell", "section": "Sheet Tools", "description": "Update a specific cell value in a Google Sheet by cell address" },
+        { "name": "List Worksheets", "section": "Sheet Tools", "description": "List all worksheets/sheets in a Google Spreadsheet with their details" },
+        { "name": "Create Spreadsheet", "section": "Document Tools", "description": "Create a new Google Spreadsheet with a specified title" },
+        { "name": "Create Sheet", "section": "Document Tools", "description": "Create a new sheet/tab in an existing Google Spreadsheet" },
+        { "name": "Get Spreadsheet Details", "section": "Document Tools", "description": "Get detailed information about a Google Spreadsheet including sheets, dimensions, and metadata" },
+        { "name": "List Column Headers", "section": "Header Tools", "description": "Get the column headers from the first row of a Google Sheet" },
+        { "name": "Create Column Headers", "section": "Header Tools", "description": "Create column headers in the first row of a Google Sheet" }
+      ]
+    },
+    { 
+      "name": "Gmail", 
+      "keywords": ["gmail", "email", "mail", "google", "message", "inbox", "send email"],
+      "subactions": [
+        { "name": "Search Emails" },
+        { "name": "Send Email" }
+      ]
+    },
     { "name": "Google Calendar", "keywords": ["google", "calendar", "schedule", "event", "meeting", "date"] },
     { "name": "Google Vertex AI", "keywords": ["google", "vertex"] },
     { "name": "Google Workspace", "keywords": ["google", "workspace", "g suite", "productivity", "office"] },
@@ -46,7 +97,14 @@
     { "name": "Oracle", "keywords": ["oracle", "database", "db", "sql", "enterprise"] },
     { "name": "Oracle Database", "keywords": ["oracle", "database", "db", "sql", "enterprise"] },
     { "name": "OpenAI", "keywords": ["openai", "dall-e"] },
-    { "name": "Outlook", "keywords": ["outlook", "email", "mail", "microsoft", "calendar", "send email"] },
+    { 
+      "name": "Outlook", 
+      "keywords": ["outlook", "email", "mail", "microsoft", "calendar", "send email"],
+      "subactions": [
+        { "name": "Search Emails" },
+        { "name": "Send Email" }
+      ]
+    },
     { "name": "OneDrive", "keywords": ["onedrive", "storage", "file", "cloud", "microsoft", "drive"] },
     { "name": "PostgreSQL", "keywords": ["postgresql", "postgres", "database", "sql", "db"] },
     { "name": "Realtime Chat", "keywords": ["realtime", "chat", "messaging", "live", "communication"] },
@@ -54,10 +112,41 @@
     { "name": "Salesforce", "keywords": ["salesforce", "crm", "sales", "customer", "management"] },
     { "name": "Sap", "keywords": ["sap", "erp", "enterprise", "business", "software"] },
     { "name": "SEC EDGAR", "keywords": ["sec", "edgar", "filing", "financial", "stock", "market"] },
-    { "name": "SharePoint", "keywords": ["sharepoint", "storage", "file", "microsoft", "collaboration"] },
+    { 
+      "name": "SharePoint", 
+      "keywords": ["sharepoint", "storage", "file", "microsoft", "collaboration"],
+      "subactions": [
+        { "name": "Search Files", "section": "Search Tools", "description": "Search for files and documents in SharePoint" },
+        { "name": "Create Word Document", "section": "Document Tools", "description": "Create a Word (DOCX) file in SharePoint with supplied text." }
+      ]
+    },
     { "name": "Slack", "keywords": ["slack", "chat", "messaging", "team", "collaboration"] },
     { "name": "StackAI", "keywords": ["stackai", "stack", "platform"] },
-    { "name": "Excel", "keywords": ["excel", "spreadsheet", "table", "data", "microsoft"] },
+    { 
+      "name": "Excel", 
+      "keywords": ["excel", "spreadsheet", "table", "data", "microsoft"],
+      "subactions": [
+        { "name": "Create Sheet", "section": "Sheet Tools", "description": "Create a new sheet in an Excel workbook" },
+        { "name": "Clear Sheet", "section": "Sheet Tools", "description": "Clear data from an Excel sheet in SharePoint" },
+        { "name": "Delete Sheet", "section": "Sheet Tools", "description": "Delete a sheet from an Excel workbook in SharePoint" },
+        { "name": "List Sheets", "section": "Sheet Tools", "description": "List all worksheets in an Excel workbook" },
+        { "name": "Read from Sheet", "section": "Sheet Tools", "description": "Read data from an Excel sheet" },
+        { "name": "Update Cell", "section": "Sheet Tools", "description": "Update a specific cell value in an Excel sheet by cell address" },
+        { "name": "Get Sheet by ID", "section": "Worksheet Tools", "description": "Get a specific sheet by its ID or name from an Excel workbook" },
+        { "name": "Rename Sheet", "section": "Worksheet Tools", "description": "Rename a sheet in an Excel workbook" },
+        { "name": "Create Table", "section": "Table Tools", "description": "Create a table in an Excel sheet" },
+        { "name": "Add Data to Table", "section": "Table Tools", "description": "Add data to a table in an Excel sheet." },
+        { "name": "Write to Sheet", "section": "Row Tools", "description": "Write data to a specific range in an Excel sheet. Overwrites any existing data in the target range." },
+        { "name": "Write to Sheet", "section": "Range Tools", "description": "Write data to a specific range in an Excel sheet. Overwrites any existing data in the target range." },
+        { "name": "Write to Sheet", "section": "Write Tools", "description": "Write data to a specific range in an Excel sheet. Overwrites any existing data in the target range." },
+        { "name": "Find Row", "section": "Spreadsheet Tools", "description": "Find rows containing specific search criteria in an Excel sheet." },
+        { "name": "Get Cells in Range", "section": "Spreadsheet Tools", "description": "Get cell values from an Excel sheet" },
+        { "name": "Get Row by Index", "section": "Spreadsheet Tools", "description": "Get a specific row by index from an Excel worksheet" },
+        { "name": "Update Row", "section": "Spreadsheet Tools", "description": "Update a specific row in an Excel sheet with new data." },
+        { "name": "Create Workbook", "section": "Workbook Tools", "description": "Create a new Excel workbook in SharePoint or OneDrive." },
+        { "name": "List Workbooks", "section": "Workbook Tools", "description": "List all Excel workbooks from a SharePoint site" }
+      ]
+    },
     { "name": "DuckDuckGo", "keywords": ["duckduckgo", "search", "web", "browser", "ddg"] },
     { "name": "Together AI", "keywords": ["together", "inference"] },
     { "name": "Weaviate", "keywords": ["weaviate", "vector", "database", "search", "embedding"] },

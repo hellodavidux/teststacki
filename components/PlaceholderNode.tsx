@@ -9,6 +9,7 @@ interface PlaceholderNodeProps {
   position: { x: number; y: number }
   onPositionChange?: (id: string, position: { x: number; y: number }) => void
   onHandleDragStart?: (id: string, side: 'left' | 'right', position: { x: number; y: number }) => void
+  onSelect?: (id: string) => void
 }
 
 export default function PlaceholderNode({ 
@@ -16,13 +17,15 @@ export default function PlaceholderNode({
   name, 
   position, 
   onPositionChange,
-  onHandleDragStart
+  onHandleDragStart,
+  onSelect
 }: PlaceholderNodeProps) {
   const [isHovered, setIsHovered] = useState(false)
   const [isLeftHandleHovered, setIsLeftHandleHovered] = useState(false)
   const [isRightHandleHovered, setIsRightHandleHovered] = useState(false)
   const [isDragging, setIsDragging] = useState(false)
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
+  const [mouseDownPos, setMouseDownPos] = useState<{ x: number; y: number } | null>(null)
   const nodeRef = useRef<HTMLDivElement>(null)
   const leftHandleRef = useRef<HTMLButtonElement>(null)
   const rightHandleRef = useRef<HTMLButtonElement>(null)
@@ -36,6 +39,7 @@ export default function PlaceholderNode({
     const startY = e.clientY - position.y
     setIsDragging(true)
     setDragStart({ x: startX, y: startY })
+    setMouseDownPos({ x: e.clientX, y: e.clientY })
   }
 
   const handleHandleMouseDown = (side: 'left' | 'right', e: React.MouseEvent) => {
@@ -66,8 +70,18 @@ export default function PlaceholderNode({
       }
     }
 
-    const handleMouseUp = () => {
+    const handleMouseUp = (e: MouseEvent) => {
+      // Check if this was a click (not a drag) - if mouse moved less than 5px, treat as click
+      if (mouseDownPos && onSelect) {
+        const deltaX = Math.abs(e.clientX - mouseDownPos.x)
+        const deltaY = Math.abs(e.clientY - mouseDownPos.y)
+        if (deltaX < 5 && deltaY < 5) {
+          // It was a click, not a drag - select the node
+          onSelect(id)
+        }
+      }
       setIsDragging(false)
+      setMouseDownPos(null)
     }
 
     window.addEventListener('mousemove', handleMouseMove)
@@ -77,7 +91,7 @@ export default function PlaceholderNode({
       window.removeEventListener('mousemove', handleMouseMove)
       window.removeEventListener('mouseup', handleMouseUp)
     }
-  }, [isDragging, dragStart, id, onPositionChange])
+  }, [isDragging, dragStart, id, onPositionChange, mouseDownPos, onSelect])
 
 
   return (

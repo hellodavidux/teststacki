@@ -211,10 +211,15 @@ const transformNodeData = (): NodeItem[] => {
   return items
 }
 
-export default function Sidebar() {
+interface SidebarProps {
+  onAddNode?: (nodeName: string, position?: { x: number; y: number }) => void
+}
+
+export default function Sidebar({ onAddNode }: SidebarProps) {
   const [searchValue, setSearchValue] = useState('')
   const [isPinned, setIsPinned] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<Category>('Popular')
+  const [draggedNode, setDraggedNode] = useState<{ name: string; startPos: { x: number; y: number } } | null>(null)
 
   // Transform and memoize node data
   const nodeData = useMemo(() => transformNodeData(), [])
@@ -295,11 +300,30 @@ export default function Sidebar() {
                       {nodes.map((node) => (
                         <button
                           key={node.id}
+                          draggable
+                          onDragStart={(e) => {
+                            setDraggedNode({ name: node.name, startPos: { x: e.clientX, y: e.clientY } })
+                            e.dataTransfer.effectAllowed = 'copy'
+                            e.dataTransfer.setData('text/plain', node.name)
+                            // Create a custom drag image
+                            const dragImage = document.createElement('div')
+                            dragImage.textContent = node.name
+                            dragImage.style.position = 'absolute'
+                            dragImage.style.top = '-1000px'
+                            document.body.appendChild(dragImage)
+                            e.dataTransfer.setDragImage(dragImage, 0, 0)
+                            setTimeout(() => document.body.removeChild(dragImage), 0)
+                          }}
+                          onDragEnd={(e) => {
+                            setDraggedNode(null)
+                          }}
                           onClick={() => {
-                            // TODO: Handle node selection - could open NodeSelector or trigger canvas action
+                            if (onAddNode) {
+                              onAddNode(node.name)
+                            }
                             setSearchValue('')
                           }}
-                          className="group/node w-full flex items-center justify-between px-2 py-2 hover:bg-gray-100 transition-colors text-left text-sm text-gray-700 rounded-md"
+                          className="group/node w-full flex items-center justify-between px-2 py-2 hover:bg-gray-100 transition-colors text-left text-sm text-gray-700 rounded-md cursor-grab active:cursor-grabbing"
                         >
                           <div className="flex items-center flex-1 min-w-0">
                             <div className="w-5 h-5 bg-gray-200 rounded-sm mr-3 flex-shrink-0" />
@@ -365,10 +389,29 @@ export default function Sidebar() {
                     {nodes.map((node) => (
                       <button
                         key={node.id}
-                        onClick={() => {
-                          // TODO: Handle node selection
+                        draggable
+                        onDragStart={(e) => {
+                          setDraggedNode({ name: node.name, startPos: { x: e.clientX, y: e.clientY } })
+                          e.dataTransfer.effectAllowed = 'copy'
+                          e.dataTransfer.setData('text/plain', node.name)
+                          // Create a custom drag image
+                          const dragImage = document.createElement('div')
+                          dragImage.textContent = node.name
+                          dragImage.style.position = 'absolute'
+                          dragImage.style.top = '-1000px'
+                          document.body.appendChild(dragImage)
+                          e.dataTransfer.setDragImage(dragImage, 0, 0)
+                          setTimeout(() => document.body.removeChild(dragImage), 0)
                         }}
-                        className="group/node flex items-center justify-between w-full px-2 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors rounded-md"
+                        onDragEnd={(e) => {
+                          setDraggedNode(null)
+                        }}
+                        onClick={() => {
+                          if (onAddNode) {
+                            onAddNode(node.name)
+                          }
+                        }}
+                        className="group/node flex items-center justify-between w-full px-2 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors rounded-md cursor-grab active:cursor-grabbing"
                         title={node.name}
                       >
                         <div className="flex items-center flex-1 min-w-0">

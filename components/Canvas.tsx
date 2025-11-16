@@ -1,9 +1,10 @@
 'use client'
 
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useEffect, useCallback, useImperativeHandle, forwardRef, useMemo } from 'react'
 import InputNode from './InputNode'
 import PlaceholderNode from './PlaceholderNode'
 import NodeSelector from './NodeSelector'
+import ConfigurationPanel from './ConfigurationPanel'
 
 interface Node {
   id: string
@@ -17,11 +18,16 @@ interface Connection {
   to: { nodeId: string; side: 'left' }
 }
 
-export default function Canvas() {
+export interface CanvasHandle {
+  addNode: (nodeName: string, position?: { x: number; y: number }) => string
+}
+
+const Canvas = forwardRef<CanvasHandle>((props, ref) => {
   const [zoom, setZoom] = useState(1)
   const [nodeSelectorOpen, setNodeSelectorOpen] = useState(false)
   const [nodeSelectorPosition, setNodeSelectorPosition] = useState({ x: 0, y: 0 })
   const [isPanning, setIsPanning] = useState(false)
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null)
   const [nodes, setNodes] = useState<Node[]>([
     { id: 'input-node', name: 'Input', position: { x: 0, y: 0 }, type: 'input' }
   ])
@@ -123,6 +129,86 @@ export default function Canvas() {
     })
   }, [])
 
+  // Calculate canvas bounds based on node positions
+  const canvasBounds = useMemo(() => {
+    if (nodes.length === 0) {
+      return { minX: 0, minY: 0, maxX: 2000, maxY: 2000 }
+    }
+
+    let minX = Infinity
+    let minY = Infinity
+    let maxX = -Infinity
+    let maxY = -Infinity
+
+    nodes.forEach(node => {
+      if (node.type === 'placeholder') {
+        minX = Math.min(minX, node.position.x)
+        minY = Math.min(minY, node.position.y)
+        maxX = Math.max(maxX, node.position.x + 320) // Node width is ~320px
+        maxY = Math.max(maxY, node.position.y + 200) // Approximate node height
+      } else if (node.type === 'input') {
+        // Input node - try to get position from DOM, otherwise use stored position
+        if (nodeContainerRef.current) {
+          const inputNodeElement = nodeContainerRef.current.querySelector(`[data-node-id="${node.id}"]`)
+          if (inputNodeElement) {
+            const computedStyle = window.getComputedStyle(inputNodeElement)
+            const transform = computedStyle.transform
+            if (transform && transform !== 'none') {
+              const matrix = new DOMMatrix(transform)
+              const inputX = matrix.e
+              const inputY = matrix.f
+              minX = Math.min(minX, inputX)
+              minY = Math.min(minY, inputY)
+              maxX = Math.max(maxX, inputX + 320)
+              maxY = Math.max(maxY, inputY + 200)
+            } else {
+              // Fallback to stored position
+              minX = Math.min(minX, node.position.x)
+              minY = Math.min(minY, node.position.y)
+              maxX = Math.max(maxX, node.position.x + 320)
+              maxY = Math.max(maxY, node.position.y + 200)
+            }
+          } else {
+            // Fallback to stored position
+            minX = Math.min(minX, node.position.x)
+            minY = Math.min(minY, node.position.y)
+            maxX = Math.max(maxX, node.position.x + 320)
+            maxY = Math.max(maxY, node.position.y + 200)
+          }
+        } else {
+          // Fallback to stored position
+          minX = Math.min(minX, node.position.x)
+          minY = Math.min(minY, node.position.y)
+          maxX = Math.max(maxX, node.position.x + 320)
+          maxY = Math.max(maxY, node.position.y + 200)
+        }
+      }
+    })
+
+    // If no valid bounds found, use defaults
+    if (minX === Infinity) {
+      return { minX: 0, minY: 0, maxX: 2000, maxY: 2000 }
+    }
+
+    // Add padding around nodes (viewport size worth of padding)
+    const padding = 2000
+    return {
+      minX: minX - padding,
+      minY: minY - padding,
+      maxX: maxX + padding,
+      maxY: maxY + padding
+    }
+  }, [nodes])
+
+  // Calculate canvas dimensions
+  const canvasWidth = useMemo(() => {
+    return Math.max(4000, canvasBounds.maxX - canvasBounds.minX)
+  }, [canvasBounds])
+
+  const canvasHeight = useMemo(() => {
+    return Math.max(4000, canvasBounds.maxY - canvasBounds.minY)
+  }, [canvasBounds])
+
   // Center the input node on initial load
   useEffect(() => {
     // Use double requestAnimationFrame to ensure all transforms and layout are complete
@@ -132,6 +218,102 @@ export default function Canvas() {
       })
     })
   }, [centerNodeInViewport])
+
+  // Function to add a node to the canvas
+  const addNodeToCanvas = useCallback((nodeName: string, position?: { x: number; y: number }) => {
+    const newNodeId = `node-${Date.now()}`
+    
+    // If position is provided, use it; otherwise, position relative to existing nodes
+    let nodePosition: { x: number; y: number }
+    if (position) {
+      nodePosition = position
+    } else {
+      // Find the rightmost node to position new node to its right
+      const placeholderNodes = nodes.filter(n => n.type === 'placeholder')
+      const inputNode = nodes.find(n => n.type === 'input')
+      
+      if (placeholderNodes.length > 0 || inputNode) {
+        // Get the rightmost node position
+        let rightmostX = -Infinity
+        let rightmostY = 0
+        
+        // Check placeholder nodes
+        placeholderNodes.forEach(node => {
+          if (node.position.x > rightmostX) {
+            rightmostX = node.position.x
+            rightmostY = node.position.y
+          }
+        })
+        
+        // Check input node (it has its own position state, so we need to get it from DOM)
+        if (inputNode && nodeContainerRef.current) {
+          const inputNodeElement = nodeContainerRef.current.querySelector(`[data-node-id="${inputNode.id}"]`)
+          if (inputNodeElement) {
+            const computedStyle = window.getComputedStyle(inputNodeElement)
+            const transform = computedStyle.transform
+            if (transform && transform !== 'none') {
+              const matrix = new DOMMatrix(transform)
+              const inputX = matrix.e
+              const inputY = matrix.f
+              if (inputX > rightmostX) {
+                rightmostX = inputX
+                rightmostY = inputY
+              }
+            }
+          }
+        }
+        
+        // Position new node to the right of the rightmost node
+        nodePosition = { 
+          x: rightmostX + 350, // Same offset as NodeSelector uses
+          y: rightmostY // Same Y coordinate for horizontal alignment
+        }
+      } else {
+        // No existing nodes, center in viewport
+        const scrollContainer = scrollContainerRef.current
+        if (scrollContainer) {
+          const containerRect = scrollContainer.getBoundingClientRect()
+          const centerX = (scrollContainer.scrollLeft + containerRect.width / 2) / zoom
+          const centerY = (scrollContainer.scrollTop + containerRect.height / 2) / zoom
+          nodePosition = { x: centerX - 160, y: centerY - 100 } // Offset by half node size
+        } else {
+          nodePosition = { x: 300, y: 200 }
+        }
+      }
+    }
+    
+    const newNode: Node = {
+      id: newNodeId,
+      name: nodeName,
+      position: nodePosition,
+      type: 'placeholder'
+    }
+    
+    setNodes(prev => [...prev, newNode])
+    
+    // Update handle positions after adding new node
+    requestAnimationFrame(() => {
+      updateHandlePositions()
+      // Center the newly added node in the viewport only if no position was provided
+      requestAnimationFrame(() => {
+        if (!position) {
+          centerNodeInViewport(newNodeId)
+        }
+        // If it's a node with configuration panel, automatically select it
+        const nodesWithConfigPanel = ['Gmail', 'Outlook', 'Google Drive', 'Google Sheets', 'SharePoint', 'Excel']
+        if (nodesWithConfigPanel.includes(nodeName)) {
+          setSelectedNodeId(newNodeId)
+        }
+      })
+    })
+    
+    return newNodeId
+  }, [zoom, updateHandlePositions, centerNodeInViewport, nodes])
+
+  // Expose addNode function via ref
+  useImperativeHandle(ref, () => ({
+    addNode: addNodeToCanvas
+  }), [addNodeToCanvas])
 
   useEffect(() => {
     const canvas = canvasRef.current
@@ -248,11 +430,16 @@ export default function Canvas() {
       // Don't pan if clicking directly on node content
       if (target.closest('.bg-white.rounded-xl')) return
       
-      // Don't pan if clicking inside the NodeSelector
+      // Don't pan if clicking inside the NodeSelector or ConfigurationPanel
       if (target.closest('.fixed.bg-white.rounded-lg.shadow-xl')) return
+      if (target.closest('.fixed.right-0')) return
 
       e.preventDefault()
       e.stopPropagation()
+      
+      // Deselect any selected node when clicking on canvas
+      setSelectedNodeId(null)
+      
       panning = true
       setIsPanning(true)
       startX = e.clientX + scrollContainer.scrollLeft
@@ -292,11 +479,35 @@ export default function Canvas() {
   return (
     <div 
       ref={canvasRef}
+      data-canvas-container
       className="flex-grow overflow-hidden relative"
       style={{ 
         isolation: 'isolate',
         contain: 'layout style paint',
         transform: 'translateZ(0)', // Create new stacking context
+      }}
+      onDragOver={(e) => {
+        e.preventDefault()
+        e.dataTransfer.dropEffect = 'copy'
+      }}
+      onDrop={(e) => {
+        e.preventDefault()
+        e.stopPropagation()
+        // Get the node name from dataTransfer if available
+        const nodeName = e.dataTransfer.getData('text/plain')
+        if (nodeName && scrollContainerRef.current) {
+          // Calculate position relative to scroll container and zoom
+          const scrollContainer = scrollContainerRef.current
+          const rect = scrollContainer.getBoundingClientRect()
+          const scrollX = scrollContainer.scrollLeft
+          const scrollY = scrollContainer.scrollTop
+          
+          // Calculate position in canvas coordinates (accounting for zoom)
+          const x = (e.clientX - rect.left + scrollX) / zoom - 160
+          const y = (e.clientY - rect.top + scrollY) / zoom - 100
+          
+          addNodeToCanvas(nodeName, { x, y })
+        }
       }}
     >
       <div 
@@ -309,6 +520,29 @@ export default function Canvas() {
           maxHeight: '100%',
           transform: 'translateZ(0)', // Isolate transforms
           cursor: isPanning ? 'grabbing' : 'grab',
+        }}
+        onDragOver={(e) => {
+          e.preventDefault()
+          e.dataTransfer.dropEffect = 'copy'
+        }}
+        onDrop={(e) => {
+          e.preventDefault()
+          e.stopPropagation()
+          // Get the node name from dataTransfer if available
+          const nodeName = e.dataTransfer.getData('text/plain')
+          if (nodeName && scrollContainerRef.current) {
+            // Calculate position relative to scroll container and zoom
+            const scrollContainer = scrollContainerRef.current
+            const rect = scrollContainer.getBoundingClientRect()
+            const scrollX = scrollContainer.scrollLeft
+            const scrollY = scrollContainer.scrollTop
+            
+            // Calculate position in canvas coordinates (accounting for zoom)
+            const x = (e.clientX - rect.left + scrollX) / zoom - 160
+            const y = (e.clientY - rect.top + scrollY) / zoom - 100
+            
+            addNodeToCanvas(nodeName, { x, y })
+          }
         }}
       >
         <div
@@ -373,6 +607,9 @@ export default function Canvas() {
                     onHandleDragStart={(id, side, position) => {
                       setDraggingConnection({ nodeId: id, side, startPos: position })
                       setDragMousePos(position)
+                    }}
+                    onSelect={(id) => {
+                      setSelectedNodeId(id)
                     }}
                   />
                 )
@@ -452,6 +689,21 @@ export default function Canvas() {
         
       </svg>
 
+      {/* Configuration Panel - shown when any node is selected */}
+      {selectedNodeId && (() => {
+        const selectedNode = nodes.find(n => n.id === selectedNodeId)
+        if (selectedNode) {
+          return (
+            <ConfigurationPanel
+              nodeName={selectedNode.name}
+              nodeId={selectedNode.id}
+              onClose={() => setSelectedNodeId(null)}
+            />
+          )
+        }
+        return null
+      })()}
+
       {/* Node Selector - managed at canvas level */}
       <NodeSelector
         isOpen={nodeSelectorOpen}
@@ -524,6 +776,11 @@ export default function Canvas() {
               // Center the newly added node in the viewport
               requestAnimationFrame(() => {
                 centerNodeInViewport(newNodeId)
+                // Open configuration panel for nodes that support it
+                const nodesWithConfigPanel = ['Gmail', 'Outlook', 'Google Drive', 'Google Sheets', 'SharePoint', 'Excel']
+                if (nodesWithConfigPanel.includes(nodeName)) {
+                  setSelectedNodeId(newNodeId)
+                }
               })
             })
           }
@@ -533,5 +790,9 @@ export default function Canvas() {
       />
     </div>
   )
-}
+})
+
+Canvas.displayName = 'Canvas'
+
+export default Canvas
 
