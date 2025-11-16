@@ -237,10 +237,11 @@ export default function Canvas() {
       if (draggingConnection) return
       
       // Only handle if within canvas
-      if (!canvas.contains(e.target as Node)) return
+      if (!e.target) return
+      const target = e.target as HTMLElement
+      if (!canvas.contains(target)) return
       
       // Don't start panning if clicking on interactive elements or nodes
-      const target = e.target as HTMLElement
       if (target.closest('button, textarea, input, [data-node]')) return
       
       // Check if clicking on a node (nodes have specific classes or structure)
