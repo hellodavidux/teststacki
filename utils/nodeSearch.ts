@@ -449,6 +449,7 @@ export function groupNodes(nodes: NodeItem[], isSearching: boolean, searchQuery:
   })
   
   // Group regular nodes by category (Knowledge Base, StackAI, and Inputs excluded)
+  const regularSections: Record<string, Array<{ node: NodeItem; score: number }>> = {}
   regularNodes.forEach(({ node, score }) => {
     let section: string
     // Use JSON parent category as the main label
@@ -460,29 +461,16 @@ export function groupNodes(nodes: NodeItem[], isSearching: boolean, searchQuery:
       section = node.category
     }
     
-    if (!result[section]) {
-      result[section] = []
+    if (!regularSections[section]) {
+      regularSections[section] = []
     }
-    result[section].push({ node, score })
+    regularSections[section].push({ node, score })
   })
   
-  // Sort nodes within each category by score (highest first)
-  // Note: Core Nodes, Inputs and StackAI sections are already sorted and converted to nodes above
-  Object.keys(result).forEach(section => {
-    if (section !== '') { // Don't sort the top results section
-      // Regular nodes sections need to be sorted
-      // Core Nodes, Inputs and StackAI sections are already sorted, so we can check if they're from regularNodes
-      const isStackAISection = Object.keys(stackAISections).includes(section)
-      const isInputsSection = section === 'Inputs'
-      const isCoreNodesSection = section === 'Core Nodes'
-      if (!isStackAISection && !isInputsSection && !isCoreNodesSection) {
-        // It's a regular section, sort by score
-        result[section] = (result[section] as Array<{ node: NodeItem; score: number }>)
-          .sort((a, b) => b.score - a.score)
-          .map(({ node }) => node) // Extract just the node
-      }
-      // Core Nodes, Inputs and StackAI sections are already sorted and converted to nodes, no need to process
-    }
+  // Sort and add regular sections
+  Object.keys(regularSections).forEach(section => {
+    regularSections[section].sort((a, b) => b.score - a.score)
+    result[section] = regularSections[section].map(({ node }) => node)
   })
   
   // Add Knowledge Base nodes at the bottom with lowest priority
