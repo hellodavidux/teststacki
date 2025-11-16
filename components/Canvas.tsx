@@ -139,10 +139,11 @@ export default function Canvas() {
 
     const handleWheel = (e: WheelEvent) => {
       // Only handle wheel events within the canvas
-      if (!canvas.contains(e.target as Node)) return
+      if (!e.target) return
+      const target = e.target as HTMLElement
+      if (!canvas.contains(target)) return
       
       // Don't handle wheel events if they're inside the NodeSelector
-      const target = e.target as HTMLElement
       if (target.closest('.fixed.bg-white.rounded-lg.shadow-xl')) return
       
       // Prevent default browser zoom and scrolling
