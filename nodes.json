@@ -221,17 +221,7 @@
     { "name": "If/Else", "keywords": ["if", "else", "conditional", "logic", "branch", "decision"] },
     { "name": "AI Routing", "keywords": ["ai", "routing", "route", "intelligent", "decision", "classify"] },
     { "name": "Loop Subflow", "keywords": ["loop", "iterate", "repeat", "subflow", "cycle"] },
-    { "name": "Utils", "keywords": ["utils", "utility", "helper", "function", "tool"] },
-    { "name": "Stack AI Project", "keywords": ["stack", "ai", "project", "workflow", "execute"] },
-    { "name": "Stack AI Project (Beta)", "keywords": ["stack", "ai", "project", "beta", "workflow"] },
-    { "name": "Sticky Note", "keywords": ["sticky", "note", "comment", "annotation", "text"] },
-    { "name": "Default Message", "keywords": ["default", "message", "fallback", "response"] },
-    { "name": "Delay", "keywords": ["delay", "wait", "sleep", "pause", "time"] },
-    { "name": "Shared Memory", "keywords": ["shared", "memory", "state", "store", "cache"] },
-    { "name": "Dynamic Vector Store", "keywords": ["dynamic", "vector", "store", "embedding", "search"] },
-    { "name": "Text-to-SQL", "keywords": ["text", "sql", "query", "database", "natural language"] },
-    { "name": "Search Tables", "keywords": ["search", "tables", "database", "query", "find"] },
-    { "name": "Search Data", "keywords": ["search", "data", "query", "find", "filter"] }
+    { "name": "Delay", "keywords": ["delay", "wait", "sleep", "pause", "time"] }
   ],
   "Popular": [
     { "name": "AI Agent", "keywords": ["ai", "agent", "assistant", "chatbot", "llm", "gpt"] },
@@ -239,9 +229,7 @@
     { "name": "User Input", "keywords": ["input", "user", "trigger", "start", "begin"] },
     { "name": "Trigger", "keywords": ["app", "trigger", "webhook", "api", "start"] },
     { "name": "Output", "keywords": ["output", "result", "end", "return"] },
-    { "name": "If/Else", "keywords": ["if", "else", "if else", "conditional", "logic", "branch", "decision"] },
-    { "name": "Gmail", "keywords": ["gmail", "email", "mail", "google", "message", "inbox", "send email"] },
-    { "name": "Google Drive", "keywords": ["google", "drive", "storage", "file", "cloud", "gdrive"] }
+    { "name": "If/Else", "keywords": ["if", "else", "if else", "conditional", "logic", "branch", "decision"] }
   ],
   "StackAI": {
     "Code Tools": [
@@ -308,6 +296,17 @@
       { "name": "Code Execution", "keywords": ["code", "execute", "run", "script", "programming"] },
       { "name": "File Navigation", "keywords": ["file", "navigate", "directory", "folder", "path"] },
       { "name": "Terminal", "keywords": ["terminal", "command", "shell", "cli", "execute"] }
+    ],
+    "Tools": [
+      { "name": "Stack AI Project", "keywords": ["stack", "ai", "project", "workflow", "execute"] },
+      { "name": "Stack AI Project (Beta)", "keywords": ["stack", "ai", "project", "beta", "workflow"] },
+      { "name": "Sticky Note", "keywords": ["sticky", "note", "comment", "annotation", "text"] },
+      { "name": "Default Message", "keywords": ["default", "message", "fallback", "response"] },
+      { "name": "Shared Memory", "keywords": ["shared", "memory", "state", "store", "cache"] },
+      { "name": "Dynamic Vector Store", "keywords": ["dynamic", "vector", "store", "embedding", "search"] },
+      { "name": "Text-to-SQL", "keywords": ["text", "sql", "query", "database", "natural language"] },
+      { "name": "Search Tables", "keywords": ["search", "tables", "database", "query", "find"] },
+      { "name": "Search Data", "keywords": ["search", "data", "query", "find", "filter"] }
     ]
   },
   "Knowledge Base": [
