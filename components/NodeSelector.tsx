@@ -160,6 +160,10 @@ const transformNodeData = (): NodeItem[] => {
       if (Array.isArray(actions)) {
         actions.forEach((item: NodeDataValue) => {
           const { name, keywords } = extractNodeInfo(item)
+          // Exclude Send Email action from StackAI Email Tools
+          if (section === 'Email Tools' && name === 'Send Email') {
+            return
+          }
           items.push({
             id: generateId(name, 'stackai'),
             name,

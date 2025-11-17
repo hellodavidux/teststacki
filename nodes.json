@@ -286,7 +286,7 @@
       { "name": "Text to Image", "keywords": ["text", "image", "generate", "create", "dall-e"] }
     ],
     "Email Tools": [
-      { "name": "Send Email", "keywords": ["Send Email", "email", "send", "mail", "message", "smtp", "gmail", "outlook", "send email"] }
+      { "name": "Send Email", "keywords": ["ddddd"] }
     ],
     "Web Search Tools": [
       { "name": "Web Search", "keywords": ["web", "search", "google", "find", "query"] }
