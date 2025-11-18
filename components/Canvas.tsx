@@ -299,11 +299,8 @@ const Canvas = forwardRef<CanvasHandle>((props, ref) => {
         if (!position) {
           centerNodeInViewport(newNodeId)
         }
-        // If it's a node with configuration panel, automatically select it
-        const nodesWithConfigPanel = ['Gmail', 'Outlook', 'Google Drive', 'Google Sheets', 'SharePoint', 'Excel']
-        if (nodesWithConfigPanel.includes(nodeName)) {
-          setSelectedNodeId(newNodeId)
-        }
+        // Automatically open configuration panel for the newly added node
+        setSelectedNodeId(newNodeId)
       })
     })
     
@@ -776,11 +773,8 @@ const Canvas = forwardRef<CanvasHandle>((props, ref) => {
               // Center the newly added node in the viewport
               requestAnimationFrame(() => {
                 centerNodeInViewport(newNodeId)
-                // Open configuration panel for nodes that support it
-                const nodesWithConfigPanel = ['Gmail', 'Outlook', 'Google Drive', 'Google Sheets', 'SharePoint', 'Excel']
-                if (nodesWithConfigPanel.includes(nodeName)) {
-                  setSelectedNodeId(newNodeId)
-                }
+                // Automatically open configuration panel for the newly added node
+                setSelectedNodeId(newNodeId)
               })
             })
           }

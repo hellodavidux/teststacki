@@ -38,39 +38,12 @@
     { "name": "StackAI", "keywords": ["stackai", "stack", "ai", "platform"] }
   ],
   "Apps": [
-    { "name": "Airtable", "keywords": ["airtable", "database", "spreadsheet", "table", "data"] },
-    { "name": "Anthropic", "keywords": ["anthropic", "claude", "chat"] },
-    { "name": "Azure Blob Storage", "keywords": ["azure", "blob", "storage", "cloud", "file", "microsoft"] },
-    { "name": "Azure SQL", "keywords": ["azure", "sql", "database", "microsoft", "db"] },
-    { "name": "Azure OpenAI", "keywords": ["azure", "openai", "microsoft"] },
-    { "name": "Dropbox", "keywords": ["dropbox", "storage", "file", "cloud"] },
-    { "name": "Epic FHIR", "keywords": ["epic", "fhir", "healthcare", "medical", "ehr"] },
-    { "name": "Firecrawl", "keywords": ["firecrawl", "web", "scrape", "crawl", "website"] },
-    { "name": "Google Docs", "keywords": ["google", "docs", "document", "word", "text", "editor"] },
     { 
       "name": "Google Drive", 
       "keywords": ["google", "drive", "storage", "file", "cloud", "gdrive"],
       "subactions": [
         { "name": "Get File", "section": "File Tools", "description": "Get a file's metadata, content, or parsed text from Google Drive" },
         { "name": "Create File", "section": "File Tools", "description": "Create a file in Google Drive (optionally upload content for pdf/docx/xlsx/pptx)" }
-      ]
-    },
-    { 
-      "name": "Google Sheets", 
-      "keywords": ["google", "sheets", "spreadsheet", "excel", "table", "data"],
-      "subactions": [
-        { "name": "Write to Sheet", "section": "Sheet Tools", "description": "Write data to a Google Sheet (e.g., Sheet1, JSON data)" },
-        { "name": "Read from Sheet", "section": "Sheet Tools", "description": "Read data from a Google Sheet (e.g., Sheet1, range A1:B10)" },
-        { "name": "Update Sheet", "section": "Sheet Tools", "description": "Update data in a Google Sheet (by row, criteria, or range)" },
-        { "name": "Delete Row", "section": "Sheet Tools", "description": "Delete a specific row from a Google Sheet by row number" },
-        { "name": "Get Row by Index", "section": "Sheet Tools", "description": "Get a specific row from a Google Sheet by row number/index" },
-        { "name": "Update Cell", "section": "Sheet Tools", "description": "Update a specific cell value in a Google Sheet by cell address" },
-        { "name": "List Worksheets", "section": "Sheet Tools", "description": "List all worksheets/sheets in a Google Spreadsheet with their details" },
-        { "name": "Create Spreadsheet", "section": "Document Tools", "description": "Create a new Google Spreadsheet with a specified title" },
-        { "name": "Create Sheet", "section": "Document Tools", "description": "Create a new sheet/tab in an existing Google Spreadsheet" },
-        { "name": "Get Spreadsheet Details", "section": "Document Tools", "description": "Get detailed information about a Google Spreadsheet including sheets, dimensions, and metadata" },
-        { "name": "List Column Headers", "section": "Header Tools", "description": "Get the column headers from the first row of a Google Sheet" },
-        { "name": "Create Column Headers", "section": "Header Tools", "description": "Create column headers in the first row of a Google Sheet" }
       ]
     },
     { 
@@ -81,47 +54,6 @@
         { "name": "Send Email" }
       ]
     },
-    { "name": "Google Calendar", "keywords": ["google", "calendar", "schedule", "event", "meeting", "date"] },
-    { "name": "Google Vertex AI", "keywords": ["google", "vertex"] },
-    { "name": "Google Workspace", "keywords": ["google", "workspace", "g suite", "productivity", "office"] },
-    { "name": "Groq", "keywords": ["groq", "fast", "inference"] },
-    { "name": "Intercom", "keywords": ["intercom", "chat", "support", "customer", "messaging"] },
-    { "name": "Jira", "keywords": ["jira", "project", "management", "ticket", "issue", "atlassian"] },
-    { "name": "Linear", "keywords": ["linear", "project", "management", "issue", "tracker"] },
-    { "name": "Looker", "keywords": ["looker", "bi", "analytics", "dashboard", "data"] },
-    { "name": "MCP", "keywords": ["mcp", "context", "protocol"] },
-    { "name": "Microsoft Teams", "keywords": ["microsoft", "teams", "chat", "collaboration", "meeting"] },
-    { "name": "MySQL", "keywords": ["mysql", "database", "sql", "db", "relational"] },
-    { "name": "NetSuite", "keywords": ["netsuite", "erp", "business", "finance", "accounting"] },
-    { "name": "Notion", "keywords": ["notion", "wiki", "notes", "documentation", "database"] },
-    { "name": "Oracle", "keywords": ["oracle", "database", "db", "sql", "enterprise"] },
-    { "name": "Oracle Database", "keywords": ["oracle", "database", "db", "sql", "enterprise"] },
-    { "name": "OpenAI", "keywords": ["openai", "dall-e"] },
-    { 
-      "name": "Outlook", 
-      "keywords": ["outlook", "email", "mail", "microsoft", "calendar", "send email"],
-      "subactions": [
-        { "name": "Search Emails" },
-        { "name": "Send Email" }
-      ]
-    },
-    { "name": "OneDrive", "keywords": ["onedrive", "storage", "file", "cloud", "microsoft", "drive"] },
-    { "name": "PostgreSQL", "keywords": ["postgresql", "postgres", "database", "sql", "db"] },
-    { "name": "Realtime Chat", "keywords": ["realtime", "chat", "messaging", "live", "communication"] },
-    { "name": "Replicate", "keywords": ["replicate", "inference"] },
-    { "name": "Salesforce", "keywords": ["salesforce", "crm", "sales", "customer", "management"] },
-    { "name": "Sap", "keywords": ["sap", "erp", "enterprise", "business", "software"] },
-    { "name": "SEC EDGAR", "keywords": ["sec", "edgar", "filing", "financial", "stock", "market"] },
-    { 
-      "name": "SharePoint", 
-      "keywords": ["sharepoint", "storage", "file", "microsoft", "collaboration"],
-      "subactions": [
-        { "name": "Search Files", "section": "Search Tools", "description": "Search for files and documents in SharePoint" },
-        { "name": "Create Word Document", "section": "Document Tools", "description": "Create a Word (DOCX) file in SharePoint with supplied text." }
-      ]
-    },
-    { "name": "Slack", "keywords": ["slack", "chat", "messaging", "team", "collaboration"] },
-    { "name": "StackAI", "keywords": ["stackai", "stack", "platform"] },
     { 
       "name": "Excel", 
       "keywords": ["excel", "spreadsheet", "table", "data", "microsoft"],
@@ -147,6 +79,75 @@
         { "name": "List Workbooks", "section": "Workbook Tools", "description": "List all Excel workbooks from a SharePoint site" }
       ]
     },
+    { 
+      "name": "Google Sheets", 
+      "keywords": ["google", "sheets", "spreadsheet", "excel", "table", "data"],
+      "subactions": [
+        { "name": "Write to Sheet", "section": "Sheet Tools", "description": "Write data to a Google Sheet (e.g., Sheet1, JSON data)" },
+        { "name": "Read from Sheet", "section": "Sheet Tools", "description": "Read data from a Google Sheet (e.g., Sheet1, range A1:B10)" },
+        { "name": "Update Sheet", "section": "Sheet Tools", "description": "Update data in a Google Sheet (by row, criteria, or range)" },
+        { "name": "Delete Row", "section": "Sheet Tools", "description": "Delete a specific row from a Google Sheet by row number" },
+        { "name": "Get Row by Index", "section": "Sheet Tools", "description": "Get a specific row from a Google Sheet by row number/index" },
+        { "name": "Update Cell", "section": "Sheet Tools", "description": "Update a specific cell value in a Google Sheet by cell address" },
+        { "name": "List Worksheets", "section": "Sheet Tools", "description": "List all worksheets/sheets in a Google Spreadsheet with their details" },
+        { "name": "Create Spreadsheet", "section": "Document Tools", "description": "Create a new Google Spreadsheet with a specified title" },
+        { "name": "Create Sheet", "section": "Document Tools", "description": "Create a new sheet/tab in an existing Google Spreadsheet" },
+        { "name": "Get Spreadsheet Details", "section": "Document Tools", "description": "Get detailed information about a Google Spreadsheet including sheets, dimensions, and metadata" },
+        { "name": "List Column Headers", "section": "Header Tools", "description": "Get the column headers from the first row of a Google Sheet" },
+        { "name": "Create Column Headers", "section": "Header Tools", "description": "Create column headers in the first row of a Google Sheet" }
+      ]
+    },
+    { 
+      "name": "SharePoint", 
+      "keywords": ["sharepoint", "storage", "file", "microsoft", "collaboration"],
+      "subactions": [
+        { "name": "Search Files", "section": "Search Tools", "description": "Search for files and documents in SharePoint" },
+        { "name": "Create Word Document", "section": "Document Tools", "description": "Create a Word (DOCX) file in SharePoint with supplied text." }
+      ]
+    },
+    { "name": "Notion", "keywords": ["notion", "wiki", "notes", "documentation", "database"] },
+    { "name": "HubSpot", "keywords": ["hubspot", "crm", "marketing", "sales", "customer"] },
+    { "name": "Google Calendar", "keywords": ["google", "calendar", "schedule", "event", "meeting", "date"] },
+    { 
+      "name": "Outlook", 
+      "keywords": ["outlook", "email", "mail", "microsoft", "calendar", "send email"],
+      "subactions": [
+        { "name": "Search Emails" },
+        { "name": "Send Email" }
+      ]
+    },
+    { "name": "Airtable", "keywords": ["airtable", "database", "spreadsheet", "table", "data"] },
+    { "name": "Anthropic", "keywords": ["anthropic", "claude", "chat"] },
+    { "name": "Azure Blob Storage", "keywords": ["azure", "blob", "storage", "cloud", "file", "microsoft"] },
+    { "name": "Azure SQL", "keywords": ["azure", "sql", "database", "microsoft", "db"] },
+    { "name": "Azure OpenAI", "keywords": ["azure", "openai", "microsoft"] },
+    { "name": "Dropbox", "keywords": ["dropbox", "storage", "file", "cloud"] },
+    { "name": "Epic FHIR", "keywords": ["epic", "fhir", "healthcare", "medical", "ehr"] },
+    { "name": "Firecrawl", "keywords": ["firecrawl", "web", "scrape", "crawl", "website"] },
+    { "name": "Google Docs", "keywords": ["google", "docs", "document", "word", "text", "editor"] },
+    { "name": "Google Vertex AI", "keywords": ["google", "vertex"] },
+    { "name": "Google Workspace", "keywords": ["google", "workspace", "g suite", "productivity", "office"] },
+    { "name": "Groq", "keywords": ["groq", "fast", "inference"] },
+    { "name": "Intercom", "keywords": ["intercom", "chat", "support", "customer", "messaging"] },
+    { "name": "Jira", "keywords": ["jira", "project", "management", "ticket", "issue", "atlassian"] },
+    { "name": "Linear", "keywords": ["linear", "project", "management", "issue", "tracker"] },
+    { "name": "Looker", "keywords": ["looker", "bi", "analytics", "dashboard", "data"] },
+    { "name": "MCP", "keywords": ["mcp", "context", "protocol"] },
+    { "name": "Microsoft Teams", "keywords": ["microsoft", "teams", "chat", "collaboration", "meeting"] },
+    { "name": "MySQL", "keywords": ["mysql", "database", "sql", "db", "relational"] },
+    { "name": "NetSuite", "keywords": ["netsuite", "erp", "business", "finance", "accounting"] },
+    { "name": "Oracle", "keywords": ["oracle", "database", "db", "sql", "enterprise"] },
+    { "name": "Oracle Database", "keywords": ["oracle", "database", "db", "sql", "enterprise"] },
+    { "name": "OpenAI", "keywords": ["openai", "dall-e"] },
+    { "name": "OneDrive", "keywords": ["onedrive", "storage", "file", "cloud", "microsoft", "drive"] },
+    { "name": "PostgreSQL", "keywords": ["postgresql", "postgres", "database", "sql", "db"] },
+    { "name": "Realtime Chat", "keywords": ["realtime", "chat", "messaging", "live", "communication"] },
+    { "name": "Replicate", "keywords": ["replicate", "inference"] },
+    { "name": "Salesforce", "keywords": ["salesforce", "crm", "sales", "customer", "management"] },
+    { "name": "Sap", "keywords": ["sap", "erp", "enterprise", "business", "software"] },
+    { "name": "SEC EDGAR", "keywords": ["sec", "edgar", "filing", "financial", "stock", "market"] },
+    { "name": "Slack", "keywords": ["slack", "chat", "messaging", "team", "collaboration"] },
+    { "name": "StackAI", "keywords": ["stackai", "stack", "platform"] },
     { "name": "DuckDuckGo", "keywords": ["duckduckgo", "search", "web", "browser", "ddg"] },
     { "name": "Together AI", "keywords": ["together", "inference"] },
     { "name": "Weaviate", "keywords": ["weaviate", "vector", "database", "search", "embedding"] },
@@ -224,12 +225,17 @@
     { "name": "Delay", "keywords": ["delay", "wait", "sleep", "pause", "time"] }
   ],
   "Popular": [
+    { "name": "Trigger", "keywords": ["app", "trigger", "webhook", "api", "start"] },
+    { "name": "Inputs", "keywords": ["input", "user", "trigger", "start", "begin"] },
     { "name": "AI Agent", "keywords": ["ai", "agent", "assistant", "chatbot", "llm", "gpt"] },
     { "name": "Knowledge Base", "keywords": ["knowledge", "base", "vector", "search", "embedding", "rag"] },
-    { "name": "User Input", "keywords": ["input", "user", "trigger", "start", "begin"] },
-    { "name": "Trigger", "keywords": ["app", "trigger", "webhook", "api", "start"] },
-    { "name": "Output", "keywords": ["output", "result", "end", "return"] },
-    { "name": "If/Else", "keywords": ["if", "else", "if else", "conditional", "logic", "branch", "decision"] }
+    { "name": "Action", "keywords": ["action", "execute", "perform", "output"] },
+    { "name": "Outputs", "keywords": ["output", "result", "end", "return"] },
+    { "name": "If/Else", "keywords": ["if", "else", "if else", "conditional", "logic", "branch", "decision"] },
+    { "name": "Stack AI Project", "keywords": ["stack", "ai", "project", "workflow", "execute"] },
+    { "name": "HTTP Request", "keywords": ["http", "request", "api", "rest", "web", "call", "hook"] },
+    { "name": "Web Search", "keywords": ["web", "search", "google", "find", "query"] },
+    { "name": "Python", "keywords": ["python", "code", "script", "programming", "execute"] }
   ],
   "StackAI": {
     "Code Tools": [
@@ -297,9 +303,7 @@
       { "name": "File Navigation", "keywords": ["file", "navigate", "directory", "folder", "path"] },
       { "name": "Terminal", "keywords": ["terminal", "command", "shell", "cli", "execute"] }
     ],
-    "Tools": [
-      { "name": "Stack AI Project", "keywords": ["stack", "ai", "project", "workflow", "execute"] },
-      { "name": "Stack AI Project (Beta)", "keywords": ["stack", "ai", "project", "beta", "workflow"] },
+    "Utilities": [
       { "name": "Sticky Note", "keywords": ["sticky", "note", "comment", "annotation", "text"] },
       { "name": "Default Message", "keywords": ["default", "message", "fallback", "response"] },
       { "name": "Shared Memory", "keywords": ["shared", "memory", "state", "store", "cache"] },

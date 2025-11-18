@@ -248,42 +248,50 @@ export default function Sidebar({ onAddNode }: SidebarProps) {
         <div className="flex w-full flex-col flex-1 min-h-0">
           {/* Search Bar */}
           <div className="sticky top-0 z-10 flex flex-col bg-white">
-            <div className="flex pt-2 pb-1 items-center gap-2 flex-shrink-0">
-              {/* Search icon - always visible */}
-              <button className="flex items-center justify-center flex-shrink-0 pl-3 py-2">
-                <Search className="text-gray-600 size-5" />
-              </button>
-              {/* Search input - only visible on hover or when pinned or when searching */}
-              <div className="relative flex-1 min-w-0">
-                <input
-                  className={`w-full h-8 rounded-md border-0 bg-gray-100 pl-2 ${searchValue.trim() ? 'pr-8' : 'pr-2'} text-sm placeholder:text-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-300 transition-opacity duration-200 ${sidebarExpanded || searchValue.trim() ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
-                  placeholder="Search nodes..."
-                  value={searchValue}
-                  onChange={(e) => setSearchValue(e.target.value)}
-                />
-                {searchValue.trim() && (
-                  <button
-                    onClick={() => setSearchValue('')}
-                    className={`absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors ${sidebarExpanded || searchValue.trim() ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
-                    type="button"
-                  >
-                    <X className="size-4" />
-                  </button>
-                )}
+            <div aria-hidden="true" className="absolute border-[0px_0px_1px] border-neutral-200 border-solid inset-0 pointer-events-none" />
+            <div className="size-full">
+              <div className="box-border content-stretch flex flex-col gap-[10px] items-start px-[10px] py-[12px] relative w-full">
+              <div className="flex items-center gap-2 w-full flex-shrink-0">
+                {/* Search Bar */}
+                <div className="bg-[#f9f9f9] h-[32px] relative rounded-[8px] shrink-0 flex-1 min-w-0">
+                  <div aria-hidden="true" className="absolute border-[#ececec] border-[0.5px] border-solid inset-0 pointer-events-none rounded-[8px]" />
+                  <div className="flex flex-row items-center size-full">
+                    <div className="box-border content-stretch flex gap-[12px] h-[32px] items-center px-[10px] py-[12px] relative w-full">
+                      <div className="relative shrink-0 size-[16px]">
+                        <Search className="block size-full text-[#C4C4C4]" strokeWidth={1.5} />
+                      </div>
+                      <input
+                        type="text"
+                        value={searchValue}
+                        onChange={(e) => setSearchValue(e.target.value)}
+                        placeholder="Search..."
+                        className={`flex-1 bg-transparent border-none outline-none font-['Inter:Medium',sans-serif] font-medium leading-[16px] not-italic text-[#8c8c8c] text-[12px] tracking-[-0.12px] placeholder:text-[#8c8c8c] transition-opacity duration-200 ${sidebarExpanded || searchValue.trim() ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
+                      />
+                      {searchValue.trim() && (
+                        <button
+                          onClick={() => setSearchValue('')}
+                          className="relative shrink-0 size-[16px] text-[#8c8c8c] hover:text-[#1d1d1d] transition-colors"
+                          type="button"
+                        >
+                          <X className="block size-full" strokeWidth={1.5} />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                {/* Pin icon - always visible */}
+                <button 
+                  onClick={togglePin}
+                  className={`flex h-8 w-8 items-center justify-center rounded-md hover:bg-gray-100 transition-colors flex-shrink-0 ${isPinned ? 'text-gray-700' : 'text-gray-400'}`}
+                  title={isPinned ? 'Unpin sidebar' : 'Pin sidebar'}
+                >
+                  <Pin className={`size-4 ${isPinned ? 'fill-current' : ''}`} />
+                </button>
               </div>
-              {/* Pin icon - always visible */}
-              <button 
-                onClick={togglePin}
-                className={`flex h-8 w-8 items-center justify-center rounded-md hover:bg-gray-100 transition-colors flex-shrink-0 ${isPinned ? 'text-gray-700' : 'text-gray-400'}`}
-                title={isPinned ? 'Unpin sidebar' : 'Pin sidebar'}
-              >
-                <Pin className={`size-4 ${isPinned ? 'fill-current' : ''}`} />
-              </button>
-            </div>
 
             {/* Search Results Dropdown */}
             {searchValue.trim() && (
-              <div className="flex-1 overflow-y-auto bg-white p-1 min-h-0">
+              <div className="box-border flex flex-col gap-[2px] flex-1 items-start p-[6px] relative w-full overflow-y-auto overflow-x-hidden min-h-0">
                 {Object.entries(groupedNodes).map(([section, nodes]) => {
                   let sectionHeader: string | null = null
                   if (section !== '') {
@@ -291,14 +299,14 @@ export default function Sidebar({ onAddNode }: SidebarProps) {
                   }
                   
                   return (
-                    <div key={section}>
+                    <div key={section} className="w-full">
                       {sectionHeader && (
-                        <div className="px-2 py-2 text-xs font-normal text-gray-500 uppercase tracking-wide sticky top-0 bg-white">
+                        <div className="px-[6px] py-2 text-xs font-normal text-gray-500 uppercase tracking-wide">
                           {sectionHeader}
                         </div>
                       )}
                       {nodes.map((node) => (
-                        <button
+                        <div
                           key={node.id}
                           draggable
                           onDragStart={(e) => {
@@ -323,56 +331,92 @@ export default function Sidebar({ onAddNode }: SidebarProps) {
                             }
                             setSearchValue('')
                           }}
-                          className="group/node w-full flex items-center justify-between px-2 py-2 hover:bg-gray-100 transition-colors text-left text-sm text-gray-700 rounded-md cursor-grab active:cursor-grabbing"
+                          className="relative shrink-0 w-full cursor-pointer hover:bg-gray-50 rounded-[4px] transition-colors cursor-grab active:cursor-grabbing"
                         >
-                          <div className="flex items-center flex-1 min-w-0">
-                            <div className="w-5 h-5 bg-gray-200 rounded-sm mr-3 flex-shrink-0" />
-                            <span className="font-medium">{node.name}</span>
+                          <div className="flex flex-row items-center size-full">
+                            <div className="box-border content-stretch flex gap-[8px] items-center p-[6px] relative w-full">
+                              {/* Icon placeholder */}
+                              <div className="bg-gray-100 relative rounded-[4.714px] shrink-0 size-[22px]">
+                                <div aria-hidden="true" className="absolute border-[0.393px] border-[rgba(0,0,0,0.12)] border-solid inset-0 pointer-events-none rounded-[4.714px]" />
+                              </div>
+                              <div className="content-stretch flex flex-col items-start justify-center relative shrink-0 flex-1">
+                                <p className="font-['Inter:Medium',sans-serif] font-medium leading-[20px] not-italic relative shrink-0 text-[#1d1d1d] text-[13px] text-nowrap tracking-[-0.13px] whitespace-pre">{node.name}</p>
+                              </div>
+                              <GripVertical className={`text-gray-400 opacity-0 group-hover/node:opacity-100 transition-opacity flex-shrink-0 ${sidebarExpanded ? 'size-4 ml-2' : 'w-0 h-4 group-hover/node:w-4'}`} />
+                            </div>
                           </div>
-                          <GripVertical className={`text-gray-400 opacity-0 group-hover/node:opacity-100 transition-opacity flex-shrink-0 ${sidebarExpanded ? 'size-4 ml-2' : 'w-0 h-4 group-hover/node:w-4'}`} />
-                        </button>
+                        </div>
                       ))}
                     </div>
                   )
                 })}
                 {filteredNodes.length === 0 && (
-                  <div className="px-4 py-8 text-center text-gray-500 text-sm">
-                    No nodes found
+                  <div className="flex items-center justify-center w-full py-8">
+                    <p className="font-['Inter:Regular',sans-serif] font-normal leading-[16px] not-italic text-[#8c8c8c] text-[12px]">
+                      No items found
+                    </p>
                   </div>
                 )}
               </div>
             )}
+              </div>
+            </div>
           </div>
 
           {/* Category Tabs - hidden when searching */}
           {!searchValue.trim() && (
             <>
               {/* Collapsed: Show icon (hidden when expanded) */}
-              <div className={`flex items-center justify-center border-b border-gray-200 flex-shrink-0 mb-0 pb-3 py-1 mt-2 ${sidebarExpanded ? 'hidden' : 'group-hover:hidden'}`}>
+              <div className={`flex items-center justify-center flex-shrink-0 mb-0 pb-3 py-1 mt-2 ${sidebarExpanded ? 'hidden' : 'group-hover:hidden'}`}>
                 <div className="size-5 bg-gray-200 rounded flex-shrink-0" />
               </div>
               {/* Expanded: Show tabs (hidden when collapsed) */}
-              <div className={`flex border-b border-gray-200 px-3 gap-1 flex-shrink-0 mb-0 pb-3 mt-2 ${sidebarExpanded ? '' : 'hidden group-hover:flex'}`}>
-                {(['Popular', 'Tools', 'Apps', 'Flow'] as Category[]).map((category) => (
-                  <button
-                    key={category}
-                    onClick={() => setSelectedCategory(category)}
-                    className={`px-2 py-1 text-xs font-normal transition-colors rounded-t-md ${
-                      selectedCategory === category
-                        ? 'text-gray-900 bg-gray-100'
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                    }`}
-                  >
-                    {category}
-                  </button>
-                ))}
+              <div className={`px-[10px] flex-shrink-0 mb-0 pb-3 mt-2 ${sidebarExpanded ? '' : 'hidden group-hover:block'}`}>
+                <div className="bg-gray-100 h-[32px] relative rounded-[8px] shrink-0 w-full">
+                  <div className="flex flex-row items-center size-full">
+                    <div className="box-border content-stretch flex h-[32px] items-center p-[2px] relative w-full">
+                      {(['Popular', 'Tools', 'Apps', 'Flow'] as Category[]).map((category) => {
+                        const isActive = selectedCategory === category
+                        if (isActive) {
+                          return (
+                            <div
+                              key={category}
+                              className="basis-0 bg-white grow h-full min-h-px min-w-px relative rounded-[6px] shrink-0 cursor-pointer"
+                              onClick={() => setSelectedCategory(category)}
+                            >
+                              <div className="flex flex-row items-center justify-center overflow-clip rounded-[inherit] size-full">
+                                <div className="box-border content-stretch flex gap-[8px] items-center justify-center px-[14px] py-[4px] relative size-full">
+                                  <p className="font-['Inter:Medium',sans-serif] font-medium leading-[12px] not-italic relative shrink-0 text-[#1d1d1d] text-[12px] text-nowrap whitespace-pre">{category}</p>
+                                </div>
+                              </div>
+                              <div aria-hidden="true" className="absolute border-[0.5px] border-[rgba(0,0,0,0.16)] border-solid inset-0 pointer-events-none rounded-[6px] shadow-[0px_1px_1px_0px_rgba(0,0,0,0.04),0px_4px_6px_0px_rgba(29,29,29,0.04)]" />
+                            </div>
+                          )
+                        }
+                        return (
+                          <div
+                            key={category}
+                            className="basis-0 grow min-h-px min-w-px relative rounded-[8px] shrink-0 cursor-pointer hover:bg-gray-50 transition-colors"
+                            onClick={() => setSelectedCategory(category)}
+                          >
+                            <div className="flex flex-row items-center justify-center overflow-clip rounded-[inherit] size-full">
+                              <div className="box-border content-stretch flex gap-[4px] items-center justify-center px-[14px] py-[4px] relative w-full">
+                                <p className="font-['Inter:Regular',sans-serif] font-normal leading-[12px] not-italic relative shrink-0 text-[#1d1d1d] text-[12px] text-nowrap whitespace-pre">{category}</p>
+                              </div>
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </div>
+                </div>
               </div>
             </>
           )}
 
           {/* Popular Nodes - shown by default when not searching */}
           {!searchValue.trim() && (
-            <div className="flex flex-col p-1">
+            <div className="box-border flex flex-col gap-[2px] flex-1 items-start p-[6px] relative w-full overflow-y-auto overflow-x-hidden min-h-0">
               {Object.entries(groupedNodes).map(([section, nodes]) => {
                 let sectionHeader: string | null = null
                 if (section !== 'default') {
@@ -380,14 +424,14 @@ export default function Sidebar({ onAddNode }: SidebarProps) {
                 }
                 
                 return (
-                  <div key={section}>
+                  <div key={section} className="w-full">
                     {sectionHeader && (
-                      <div className={`px-2 py-2 text-xs font-normal text-gray-500 uppercase tracking-wide sticky top-0 bg-white ${sidebarExpanded ? '' : 'hidden group-hover:block'}`}>
+                      <div className={`px-[6px] py-2 text-xs font-normal text-gray-500 uppercase tracking-wide ${sidebarExpanded ? '' : 'hidden group-hover:block'}`}>
                         {sectionHeader}
                       </div>
                     )}
                     {nodes.map((node) => (
-                      <button
+                      <div
                         key={node.id}
                         draggable
                         onDragStart={(e) => {
@@ -411,24 +455,31 @@ export default function Sidebar({ onAddNode }: SidebarProps) {
                             onAddNode(node.name)
                           }
                         }}
-                        className="group/node flex items-center justify-between w-full px-2 py-2 text-sm text-gray-700 hover:bg-gray-100 transition-colors rounded-md cursor-grab active:cursor-grabbing"
+                        className="relative shrink-0 w-full cursor-pointer hover:bg-gray-50 rounded-[4px] transition-colors cursor-grab active:cursor-grabbing"
                         title={node.name}
                       >
-                        <div className="flex items-center flex-1 min-w-0">
-                          <div className={`flex items-center justify-center flex-shrink-0 ${sidebarExpanded ? 'mr-3' : 'group-hover:mr-3'}`}>
-                            <div className="w-5 h-5 bg-gray-200 rounded-sm" />
+                        <div className="flex flex-row items-center size-full">
+                          <div className="box-border content-stretch flex gap-[8px] items-center p-[6px] relative w-full">
+                            {/* Icon placeholder */}
+                            <div className="bg-gray-100 relative rounded-[4.714px] shrink-0 size-[22px]">
+                              <div aria-hidden="true" className="absolute border-[0.393px] border-[rgba(0,0,0,0.12)] border-solid inset-0 pointer-events-none rounded-[4.714px]" />
+                            </div>
+                            <div className="content-stretch flex flex-col items-start justify-center relative shrink-0 flex-1">
+                              <p className={`font-['Inter:Medium',sans-serif] font-medium leading-[20px] not-italic relative shrink-0 text-[#1d1d1d] text-[13px] text-nowrap tracking-[-0.13px] whitespace-pre transition-opacity ${sidebarExpanded ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>{node.name}</p>
+                            </div>
+                            <GripVertical className={`text-gray-400 opacity-0 group-hover/node:opacity-100 transition-opacity flex-shrink-0 ${sidebarExpanded ? 'size-4 ml-2' : 'w-0 h-4 group-hover/node:w-4'}`} />
                           </div>
-                          <span className={`whitespace-nowrap font-medium transition-opacity ${sidebarExpanded ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}>{node.name}</span>
                         </div>
-                        <GripVertical className={`text-gray-400 opacity-0 group-hover/node:opacity-100 transition-opacity flex-shrink-0 ${sidebarExpanded ? 'size-4 ml-2' : 'w-0 h-4 group-hover/node:w-4'}`} />
-                      </button>
+                      </div>
                     ))}
                   </div>
                 )
               })}
               {filteredNodes.length === 0 && (
-                <div className="px-4 py-8 text-center text-gray-500 text-sm">
-                  No nodes found
+                <div className="flex items-center justify-center w-full py-8">
+                  <p className="font-['Inter:Regular',sans-serif] font-normal leading-[16px] not-italic text-[#8c8c8c] text-[12px]">
+                    No items found
+                  </p>
                 </div>
               )}
             </div>
