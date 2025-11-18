@@ -8,6 +8,7 @@ export interface NodeItem {
   section?: string
   keywords?: string[]
   jsonCategory?: string // The parent category from JSON (e.g., "StackAI", "Knowledge Base", "Apps", "Flow")
+  isSubaction?: boolean // If true, only show in search results, not by default
 }
 
 /**
@@ -252,9 +253,29 @@ export function filterNodes(
   searchQuery: string,
   selectedCategory: 'Popular' | 'Tools' | 'Apps' | 'Flow'
 ): NodeItem[] {
+  // When not searching, collect Core Nodes names to exclude Popular duplicates
+  const coreNodeNames = new Set<string>()
+  if (searchQuery.trim() === '') {
+    nodes.forEach(node => {
+      if (node.jsonCategory === 'Core Nodes' && !node.isSubaction) {
+        coreNodeNames.add(node.name)
+      }
+    })
+  }
+  
   const filtered = nodes.filter(node => {
     const matchesSearch = searchQuery.trim() === '' || matchesSearchQuery(node, searchQuery)
     const matchesCategory = searchQuery.trim() !== '' || node.category === selectedCategory
+    
+    // Exclude subactions from default view (only show in search)
+    if (node.isSubaction && searchQuery.trim() === '') {
+      return false
+    }
+    
+    // When not searching, exclude Popular category nodes that duplicate Core Nodes
+    if (searchQuery.trim() === '' && node.category === 'Popular' && !node.jsonCategory && coreNodeNames.has(node.name)) {
+      return false
+    }
     
     // Exclude Knowledge Base nodes from Tools category
     if (selectedCategory === 'Tools' && node.section === 'Knowledge Base') {
@@ -404,6 +425,7 @@ export function groupNodes(nodes: NodeItem[], isSearching: boolean, searchQuery:
   const stackAINodes: Array<{ node: NodeItem; score: number }> = []
   const inputNodes: Array<{ node: NodeItem; score: number }> = []
   const coreNodes: Array<{ node: NodeItem; score: number }> = []
+  const coreSubactions: Array<{ node: NodeItem; score: number }> = []
   const regularNodes: Array<{ node: NodeItem; score: number }> = []
   
   scoredOtherNodes.forEach(({ node, score }) => {
@@ -414,7 +436,12 @@ export function groupNodes(nodes: NodeItem[], isSearching: boolean, searchQuery:
     } else if (node.jsonCategory === 'Inputs') {
       inputNodes.push({ node, score })
     } else if (node.jsonCategory === 'Core Nodes') {
-      coreNodes.push({ node, score })
+      // Separate subactions from regular Core Nodes
+      if (node.isSubaction) {
+        coreSubactions.push({ node, score })
+      } else {
+        coreNodes.push({ node, score })
+      }
     } else {
       regularNodes.push({ node, score })
     }
@@ -424,6 +451,24 @@ export function groupNodes(nodes: NodeItem[], isSearching: boolean, searchQuery:
   if (coreNodes.length > 0) {
     coreNodes.sort((a, b) => b.score - a.score)
     result['Core Nodes'] = coreNodes.map(({ node }) => node)
+  }
+  
+  // Group Core Node subactions by their section (parent name like "AI Agent")
+  if (coreSubactions.length > 0) {
+    const subactionSections: Record<string, Array<{ node: NodeItem; score: number }>> = {}
+    coreSubactions.forEach(({ node, score }) => {
+      const section = node.section || 'Core Nodes'
+      if (!subactionSections[section]) {
+        subactionSections[section] = []
+      }
+      subactionSections[section].push({ node, score })
+    })
+    
+    // Sort and add subaction sections
+    Object.keys(subactionSections).forEach(section => {
+      subactionSections[section].sort((a, b) => b.score - a.score)
+      result[section] = subactionSections[section].map(({ node }) => node)
+    })
   }
   
   // Add Inputs category (second priority after Core Nodes)

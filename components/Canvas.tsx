@@ -686,6 +686,23 @@ const Canvas = forwardRef<CanvasHandle>((props, ref) => {
         
       </svg>
 
+      {/* Dragging placeholder - follows cursor */}
+      {draggingConnection && dragMousePos && !nodeSelectorOpen && (
+        <div
+          className="fixed pointer-events-none z-40"
+          style={{
+            left: `${dragMousePos.x - 40}px`, // Center the 80px square on cursor
+            top: `${dragMousePos.y - 40}px`,
+            width: '80px',
+            height: '80px',
+            backgroundColor: 'rgba(156, 163, 175, 0.2)', // gray-400 with low opacity
+            border: '1px dashed rgba(156, 163, 175, 0.4)',
+            borderRadius: '8px',
+            transition: 'none' // No transition for smooth following
+          }}
+        />
+      )}
+
       {/* Configuration Panel - shown when any node is selected */}
       {selectedNodeId && (() => {
         const selectedNode = nodes.find(n => n.id === selectedNodeId)

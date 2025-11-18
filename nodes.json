@@ -33,7 +33,26 @@
     { "name": "Template", "keywords": ["template", "format", "output", "render"] }
   ],
   "Core Nodes": [
-    { "name": "AI Agent", "keywords": ["ai", "agent", "ai agent", "llm" ,"assistant", "chatbot", "llm", "gpt"] },
+    { 
+      "name": "AI Agent", 
+      "keywords": ["ai", "agent", "ai agent", "llm" ,"assistant", "chatbot", "llm", "gpt"],
+      "subactions": [
+        { "name": "OpenAI" },
+        { "name": "Anthropic" },
+        { "name": "Google" },
+        { "name": "Meta" },
+        { "name": "XAI" },
+        { "name": "Mistral" },
+        { "name": "Perplexity" },
+        { "name": "TogetherAI" },
+        { "name": "Cerebras" },
+        { "name": "Replicate" },
+        { "name": "Groq" },
+        { "name": "Azure" },
+        { "name": "Bedrock" },
+        { "name": "Local" }
+      ]
+    },
     { "name": "Knowledge Base", "keywords": ["knowledge", "base", "vector", "search", "embedding", "rag"] },
     { "name": "StackAI", "keywords": ["stackai", "stack", "ai", "platform"] }
   ],

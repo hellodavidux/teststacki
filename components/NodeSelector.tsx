@@ -10,6 +10,7 @@ type Category = 'Popular' | 'Tools' | 'Apps' | 'Flow'
 interface NodeDataItem {
   name: string
   keywords?: string[]
+  subactions?: Array<{ name: string }>
 }
 
 type NodeDataValue = string | NodeDataItem
@@ -96,6 +97,37 @@ const transformNodeData = (): NodeItem[] => {
         jsonCategory: 'Outputs',
         keywords
       })
+    })
+  }
+
+  // Core Nodes category
+  if (Array.isArray(data['Core Nodes'])) {
+    data['Core Nodes'].forEach((item: NodeDataValue) => {
+      const { name, keywords } = extractNodeInfo(item)
+      // Add the main node
+      items.push({
+        id: generateId(name, 'core'),
+        name,
+        category: 'Popular',
+        jsonCategory: 'Core Nodes',
+        keywords
+      })
+      
+      // If this node has subactions (like AI Agent), add them as searchable nodes
+      if (typeof item === 'object' && item.subactions && Array.isArray(item.subactions)) {
+        item.subactions.forEach((subaction: { name: string }) => {
+          items.push({
+            id: generateId(subaction.name, 'core-subaction'),
+            name: subaction.name,
+            category: 'Popular',
+            jsonCategory: 'Core Nodes',
+            section: name, // Parent node name
+            keywords: keywords, // Inherit keywords from parent
+            // Mark as subaction so it only shows in search
+            isSubaction: true
+          })
+        })
+      }
     })
   }
 
@@ -335,7 +367,7 @@ export default function NodeSelector({ isOpen, onClose, onSelectNode, position }
           <div className="bg-white shrink-0 sticky top-0 w-full">
             <div aria-hidden="true" className="absolute border-[0px_0px_1px] border-neutral-200 border-solid inset-0 pointer-events-none" />
             <div className="size-full">
-              <div className="box-border content-stretch flex flex-col gap-[10px] items-start px-[10px] py-[12px] relative w-full">
+              <div className="box-border content-stretch flex flex-col gap-[6px] items-start px-[10px] py-[12px] relative w-full">
                 {/* Search Bar */}
                 <div className="bg-[#f9f9f9] h-[32px] relative rounded-[8px] shrink-0 w-full">
                   <div aria-hidden="true" className="absolute border-[#ececec] border-[0.5px] border-solid inset-0 pointer-events-none rounded-[8px]" />
@@ -432,7 +464,7 @@ export default function NodeSelector({ isOpen, onClose, onSelectNode, position }
           {/* Node List - Scrollable */}
           <div 
             ref={scrollableRef}
-            className="box-border flex flex-col gap-[2px] flex-1 items-start p-[6px] relative w-full overflow-y-auto overflow-x-hidden min-h-0" 
+            className="box-border flex flex-col gap-[2px] flex-1 items-start px-[6px] pt-[2px] pb-[6px] relative w-full overflow-y-auto overflow-x-hidden min-h-0" 
             style={{ 
               scrollbarWidth: 'thin', 
               scrollbarColor: '#d1d5db transparent',

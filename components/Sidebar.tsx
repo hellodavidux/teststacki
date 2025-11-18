@@ -15,6 +15,7 @@ type Category = 'Popular' | 'Tools' | 'Apps' | 'Flow'
 interface NodeDataItem {
   name: string
   keywords?: string[]
+  subactions?: Array<{ name: string }>
 }
 
 type NodeDataValue = string | NodeDataItem
@@ -101,6 +102,7 @@ const transformNodeData = (): NodeItem[] => {
   if (Array.isArray(data['Core Nodes'])) {
     data['Core Nodes'].forEach((item: NodeDataValue) => {
       const { name, keywords } = extractNodeInfo(item)
+      // Add the main node
       items.push({
         id: generateId(name, 'core'),
         name,
@@ -108,6 +110,22 @@ const transformNodeData = (): NodeItem[] => {
         jsonCategory: 'Core Nodes',
         keywords
       })
+      
+      // If this node has subactions (like AI Agent), add them as searchable nodes
+      if (typeof item === 'object' && item.subactions && Array.isArray(item.subactions)) {
+        item.subactions.forEach((subaction: { name: string }) => {
+          items.push({
+            id: generateId(subaction.name, 'core-subaction'),
+            name: subaction.name,
+            category: 'Popular',
+            jsonCategory: 'Core Nodes',
+            section: name, // Parent node name
+            keywords: keywords, // Inherit keywords from parent
+            // Mark as subaction so it only shows in search
+            isSubaction: true
+          })
+        })
+      }
     })
   }
 
