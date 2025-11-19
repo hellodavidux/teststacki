@@ -3,7 +3,7 @@
 ### Search "gmail" (same for "outlook")
 Users see:
 1. **Gmail app**
-2. stack ai send email subaction
+2. StackAI send email subaction
 3. gmail knowledge base
 4. Related email nodes may appear below
 
@@ -18,13 +18,13 @@ Users see:
 ### Search "sheets"
 Users see:
 1. **Google Sheets**
-2. stack ai action: create spreedsheet file
+2. StackAI action: create spreedsheet file
 3. Excel may appear below
 
 ### Search "excel"
 Users see:
 1. **Excel**
-2. stack ai action: create spreedsheet file
+2. StackAI action: create spreedsheet file
 3. google sheets might appear below
 
 ### Search "sharepoint"

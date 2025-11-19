@@ -1,6 +1,6 @@
 # Search Nodes - Workflow Builder
 
-A modern workflow builder interface inspired by Stack AI, built with Next.js, TypeScript, and Tailwind CSS.
+A modern workflow builder interface inspired by StackAI, built with Next.js, TypeScript, and Tailwind CSS.
 
 ## Features
 
