@@ -1,6 +1,6 @@
 'use client'
 
-import { Search, X, ChevronLeft } from 'lucide-react'
+import { Search, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useState, useEffect, useMemo, useRef } from 'react'
 import nodesData from '../nodes.json'
 import { filterNodes, groupNodes, type NodeItem } from '../utils/nodeSearch'
@@ -53,7 +53,32 @@ const extractNodeInfo = (item: NodeDataValue): { name: string; keywords?: string
   return { name: item.name, keywords: item.keywords }
 }
 
-  // Transform JSON data into NodeItem array
+// Helper to generate description for a node
+const getNodeDescription = (name: string): string => {
+  const descriptions: { [key: string]: string } = {
+    'Files': 'Enables user to upload Files (e.g. PDF, Word, Excel etc.)',
+    'Input': 'User input node for collecting data from users',
+    'Output': 'Output node for displaying results',
+    'AI Agent': 'AI Agent with tool calling capabilities',
+    'Knowledge Base': 'Search and retrieve information from knowledge base',
+    'StackAI': 'StackAI platform integration node',
+    'Trigger': 'Trigger node for starting workflows',
+    'Action': 'Action node for executing operations',
+    'URL': 'URL input node for web-based triggers',
+    'Audio': 'Audio input/output node for voice interactions',
+    'Template': 'Template node for formatting output',
+  }
+  
+  // Try exact match first
+  if (descriptions[name]) {
+    return descriptions[name]
+  }
+  
+  // Generate generic description based on name
+  return `Node for ${name.toLowerCase()} operations`
+}
+
+// Transform JSON data into NodeItem array
 const transformNodeData = (): NodeItem[] => {
   const items: NodeItem[] = []
   const data = nodesData as NodesData
@@ -239,7 +264,10 @@ export default function NodeSelector({ isOpen, onClose, onSelectNode, position }
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<Category>('Popular')
   const [submenu, setSubmenu] = useState<SubmenuType>(null)
+  const [hoveredNodeId, setHoveredNodeId] = useState<string | null>(null)
+  const [tooltipPosition, setTooltipPosition] = useState<{ x: number; y: number } | null>(null)
   const scrollableRef = useRef<HTMLDivElement>(null)
+  const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   // Clear search when closing
   useEffect(() => {
@@ -247,8 +275,23 @@ export default function NodeSelector({ isOpen, onClose, onSelectNode, position }
       setSearchQuery('')
       setSelectedCategory('Popular')
       setSubmenu(null)
+      setHoveredNodeId(null)
+      setTooltipPosition(null)
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current)
+        hoverTimeoutRef.current = null
+      }
     }
   }, [isOpen])
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current)
+      }
+    }
+  }, [])
 
   // Transform and memoize node data
   const nodeData = useMemo(() => transformNodeData(), [])
@@ -495,10 +538,31 @@ export default function NodeSelector({ isOpen, onClose, onSelectNode, position }
                   return (
                     <div
                       key={nodeId}
-                      className="relative shrink-0 w-full cursor-pointer hover:bg-gray-50 rounded-[4px] transition-colors"
+                      className="group/node relative shrink-0 w-full cursor-pointer hover:bg-gray-50 rounded-[4px] transition-colors"
                       onClick={() => {
                         onSelectNode(nodeId, name)
                         onClose()
+                      }}
+                      onMouseEnter={(e) => {
+                        if (hoverTimeoutRef.current) {
+                          clearTimeout(hoverTimeoutRef.current)
+                        }
+                        const target = e.currentTarget
+                        hoverTimeoutRef.current = setTimeout(() => {
+                          if (target && document.body.contains(target)) {
+                            const rect = target.getBoundingClientRect()
+                            setTooltipPosition({ x: rect.left - 60, y: rect.top + rect.height / 2 })
+                            setHoveredNodeId(nodeId)
+                          }
+                        }, 250)
+                      }}
+                      onMouseLeave={() => {
+                        if (hoverTimeoutRef.current) {
+                          clearTimeout(hoverTimeoutRef.current)
+                          hoverTimeoutRef.current = null
+                        }
+                        setHoveredNodeId(null)
+                        setTooltipPosition(null)
                       }}
                     >
                       <div className="flex flex-row items-center size-full">
@@ -554,7 +618,7 @@ export default function NodeSelector({ isOpen, onClose, onSelectNode, position }
                       return (
                         <div
                           key={node.id}
-                          className="relative shrink-0 w-full cursor-pointer hover:bg-gray-50 rounded-[4px] transition-colors"
+                          className="group/node relative shrink-0 w-full cursor-pointer hover:bg-gray-50 rounded-[4px] transition-colors"
                           onClick={() => {
                             if (isInputNode) {
                               setSubmenu('inputs')
@@ -566,6 +630,29 @@ export default function NodeSelector({ isOpen, onClose, onSelectNode, position }
                               onSelectNode(node.id, node.name)
                               onClose()
                             }
+                          }}
+                          onMouseEnter={(e) => {
+                            if (!(isInputNode || isOutputNode)) {
+                              if (hoverTimeoutRef.current) {
+                                clearTimeout(hoverTimeoutRef.current)
+                              }
+                              const target = e.currentTarget
+                              hoverTimeoutRef.current = setTimeout(() => {
+                                if (target && document.body.contains(target)) {
+                                  const rect = target.getBoundingClientRect()
+                                  setTooltipPosition({ x: rect.left - 60, y: rect.top + rect.height / 2 })
+                                  setHoveredNodeId(node.id)
+                                }
+                              }, 250)
+                            }
+                          }}
+                          onMouseLeave={() => {
+                            if (hoverTimeoutRef.current) {
+                              clearTimeout(hoverTimeoutRef.current)
+                              hoverTimeoutRef.current = null
+                            }
+                            setHoveredNodeId(null)
+                            setTooltipPosition(null)
                           }}
                         >
                           <div className="flex flex-row items-center size-full">
@@ -579,6 +666,12 @@ export default function NodeSelector({ isOpen, onClose, onSelectNode, position }
                               <div className="content-stretch flex flex-col items-start justify-center relative shrink-0 flex-1">
                                 <p className="font-['Inter:Medium',sans-serif] font-medium leading-[20px] not-italic relative shrink-0 text-[#1d1d1d] text-[13px] text-nowrap tracking-[-0.13px] whitespace-pre">{node.name}</p>
                               </div>
+                              {/* Chevron for Input/Output nodes */}
+                              {(isInputNode || isOutputNode) && (
+                                <div className="relative shrink-0 size-[16px] text-[#8c8c8c]">
+                                  <ChevronRight className="block size-full" strokeWidth={1.5} />
+                                </div>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -600,6 +693,50 @@ export default function NodeSelector({ isOpen, onClose, onSelectNode, position }
         </div>
         <div aria-hidden="true" className="absolute border-[0.5px] border-[rgba(0,0,0,0.16)] border-solid inset-0 pointer-events-none rounded-[14px] shadow-[0px_1px_1px_0px_rgba(0,0,0,0.04),0px_4px_6px_0px_rgba(29,29,29,0.02),0px_20px_60px_0px_rgba(29,29,29,0.04),0px_2px_4px_0px_rgba(0,0,0,0.04)]" />
       </div>
+      {/* Tooltip - rendered at root level to avoid overflow clipping */}
+      {tooltipPosition && hoveredNodeId && (
+        <div
+          className="fixed z-[100] pointer-events-none"
+          style={{
+            left: `${tooltipPosition.x}px`,
+            top: `${tooltipPosition.y}px`,
+            transform: 'translateY(-50%) translateX(-100%)'
+          }}
+        >
+          <div className="bg-white rounded-lg px-4 py-3 shadow-lg border border-gray-200 max-w-xs">
+            {(() => {
+              // Find the node name from the hovered node ID
+              let nodeName = ''
+              const node = nodeData.find(n => n.id === hoveredNodeId)
+              if (node) {
+                nodeName = node.name
+              } else if (submenu && filteredSubmenuItems.length > 0) {
+                const item = filteredSubmenuItems.find((item: NodeDataValue) => {
+                  const { name } = extractNodeInfo(item)
+                  return generateId(name, submenu === 'inputs' ? 'input' : 'output') === hoveredNodeId
+                })
+                if (item) {
+                  const { name } = extractNodeInfo(item)
+                  nodeName = name
+                }
+              }
+              
+              if (!nodeName) return null
+              
+              return (
+                <>
+                  <p className="font-['Inter:Medium',sans-serif] font-medium text-sm text-[#1d1d1d] mb-1">
+                    {nodeName}
+                  </p>
+                  <p className="font-['Inter:Regular',sans-serif] font-normal text-xs text-gray-500">
+                    {getNodeDescription(nodeName)}
+                  </p>
+                </>
+              )
+            })()}
+          </div>
+        </div>
+      )}
     </>
   )
 }

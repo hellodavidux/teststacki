@@ -252,9 +252,7 @@
     { "name": "Outputs", "keywords": ["output", "result", "end", "return"] },
     { "name": "If/Else", "keywords": ["if", "else", "if else", "conditional", "logic", "branch", "decision"] },
     { "name": "Stack AI Project", "keywords": ["stack", "ai", "project", "workflow", "execute"] },
-    { "name": "HTTP Request", "keywords": ["http", "request", "api", "rest", "web", "call", "hook"] },
-    { "name": "Web Search", "keywords": ["web", "search", "google", "find", "query"] },
-    { "name": "Python", "keywords": ["python", "code", "script", "programming", "execute"] }
+    { "name": "Web Search", "keywords": ["web", "search", "google", "find", "query"] }
   ],
   "StackAI": {
     "Code Tools": [

@@ -311,8 +311,32 @@ export function filterNodes(
  */
 export function groupNodes(nodes: NodeItem[], isSearching: boolean, searchQuery: string = ''): Record<string, NodeItem[]> {
   if (!isSearching || !searchQuery.trim()) {
-    // When not searching, group by section only
-    return nodes.reduce((acc, node) => {
+    // When not searching, prioritize Input and Output nodes at the top
+    // Sort nodes to put Input and Output first
+    const sortedNodes = [...nodes].sort((a, b) => {
+      const aIsInput = a.name === 'Input' || a.name === 'Inputs'
+      const aIsOutput = a.name === 'Output' || a.name === 'Outputs'
+      const bIsInput = b.name === 'Input' || b.name === 'Inputs'
+      const bIsOutput = b.name === 'Output' || b.name === 'Outputs'
+      
+      // Input comes first
+      if (aIsInput && !bIsInput && !bIsOutput) return -1
+      if (bIsInput && !aIsInput && !aIsOutput) return 1
+      
+      // Output comes second
+      if (aIsOutput && !bIsInput && !bIsOutput) return -1
+      if (bIsOutput && !aIsInput && !aIsOutput) return 1
+      
+      // If both are Input/Output, Input comes before Output
+      if (aIsInput && bIsOutput) return -1
+      if (aIsOutput && bIsInput) return 1
+      
+      // Otherwise maintain original order
+      return 0
+    })
+    
+    // Group by section
+    return sortedNodes.reduce((acc, node) => {
       const section = node.section || 'default'
       if (!acc[section]) {
         acc[section] = []
