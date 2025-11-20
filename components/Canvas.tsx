@@ -314,7 +314,8 @@ const Canvas = forwardRef<CanvasHandle>((props, ref) => {
 
   useEffect(() => {
     const canvas = canvasRef.current
-    if (!canvas) return
+    const scrollContainer = scrollContainerRef.current
+    if (!canvas || !scrollContainer) return
 
     const handleWheel = (e: WheelEvent) => {
       // Only handle wheel events within the canvas
@@ -330,11 +331,19 @@ const Canvas = forwardRef<CanvasHandle>((props, ref) => {
       e.stopPropagation()
       e.stopImmediatePropagation()
       
-      const delta = e.deltaY * -0.01
-      setZoom((prevZoom) => {
-        const newZoom = Math.min(Math.max(0.5, prevZoom + delta), 3)
-        return newZoom
-      })
+      // Check if ctrl/cmd is pressed for pinch-to-zoom (2-finger zoom)
+      if (e.ctrlKey || e.metaKey) {
+        // Zoom behavior (2-finger pinch on trackpad)
+        const delta = e.deltaY * -0.01
+        setZoom((prevZoom) => {
+          const newZoom = Math.min(Math.max(0.5, prevZoom + delta), 3)
+          return newZoom
+        })
+      } else {
+        // Pan behavior (2-finger scroll on trackpad)
+        scrollContainer.scrollLeft += e.deltaX
+        scrollContainer.scrollTop += e.deltaY
+      }
     }
 
     // Use capture phase to catch events before they bubble
@@ -409,8 +418,8 @@ const Canvas = forwardRef<CanvasHandle>((props, ref) => {
     let startY = 0
 
     const handleMouseDown = (e: MouseEvent) => {
-      // Only handle left mouse button
-      if (e.button !== 0) return
+      // Handle left mouse button (button 0) and middle mouse button (button 1)
+      if (e.button !== 0 && e.button !== 1) return
       
       // Don't pan if we're dragging a connection
       if (draggingConnection) return
